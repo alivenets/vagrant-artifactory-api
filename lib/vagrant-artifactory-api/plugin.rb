@@ -6,6 +6,10 @@ module VagrantPlugins
             name "Artifactory API key injection plugin"
             VAGRANT_VERSION_REQUIREMENT = ">= 2.0.0"
 
+            def initialize(*)
+                super
+            end
+
             # Returns true if the Vagrant version fulfills the requirements
             #
             # @param requirements [String, Array<String>] the version requirement
@@ -26,7 +30,6 @@ module VagrantPlugins
                 end
             end
 
-            # TODO: Add logic of using value from Vagrantfile
             config "artifactory" do
                 require_relative "config"
                 Config
@@ -37,32 +40,4 @@ module VagrantPlugins
     end
 end
 
-# NOTE: The following code is a monkey patching of Downloader class to include required header.
-#       Vagrant does not provide any API for it, so it is truly hacking.
-#       There is no guarantee, that the code will work
-#       for the future Vagrant versions.
-module VagrantPlugins
-    module DownloaderExtensions
-        require_relative "defs"
-        def initialize(*args)
-            super(*args)
-
-            # TODO: Get API key from plugin config
-            header_value = ENV[VagrantPlugins::ArtifactoryApi::Defs::API_KEY_ENV_VARIABLE]
-            if header_value
-                artifactory_header = "#{VagrantPlugins::ArtifactoryApi::Defs::API_KEY_HEADER_NAME}: #{header_value}"
-                @headers << artifactory_header
-
-                @logger.info("Artifactory API header has been added: #{artifactory_header}")
-            end
-        end
-    end
-end
-
-module Vagrant
-    module Util
-        class Downloader
-            prepend VagrantPlugins::DownloaderExtensions
-        end
-    end
-end
+require_relative 'downloader_ext'
