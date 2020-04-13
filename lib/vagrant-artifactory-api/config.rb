@@ -11,6 +11,11 @@ module VagrantPlugins
                 super
                 @api_key = UNSET_VALUE
             end
+
+            def finalize!
+                require_relative 'defs'
+                @api_key = ENV[VagrantPlugins::ArtifactoryApi::Defs::API_KEY_ENV_VARIABLE] if @api_key == UNSET_VALUE
+            end
         end
     end
 end
