@@ -1,4 +1,4 @@
-require "artifactory-api/version"
+require "vagrant-artifactory-api/version"
 
 Gem::Specification.new do |s|
   s.name          = "vagrant-artifactory-api"
